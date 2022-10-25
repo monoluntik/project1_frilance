@@ -5,8 +5,8 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMar
 from datetime import datetime
 from loguru import logger
 
-# ids = [956247373, 5361912709, 967329896]
-ids = [967329896,]
+ids = [956247373, 5361912709, 967329896]
+# ids = [967329896,]
 
 headers = {
     'authority': 'api2.bybit.com',
@@ -46,7 +46,7 @@ async def thread_parse(leader_mark, username, ts):
     response = requests.get('https://api2.bybit.com/fapi/beehive/public/v1/common/order/list-detail', params=params, headers=headers)
     for column in response.json()['result']['data']:
         try:
-            pl = read_light_bd()
+            pl = await read_light_bd()
             if column['createdAtE3'] not in pl:
                 if column['side'] == 'Sell':
                     x = int(column['leverageE2']) / 100
@@ -73,8 +73,13 @@ async def thread_parse(leader_mark, username, ts):
             else:
                 logger.info("Ищу новую сделку...")
         except Exception as E:
-            logger.info(E)
+            await exception(E)
             pass
+
+async def exception(ate3):
+    with open('exseptions.txt', 'a') as write:
+        write.write(str(ate3) + '\n')
+
 async def read_light_bd():
     with open('light_bd.txt', 'r') as read:
         return read.read()
@@ -119,7 +124,7 @@ async def main_parse():
         response = requests.get('https://api2.bybit.com/fapi/beehive/public/v1/common/leader-history', params=params, headers=headers)
         for column in response.json()['result']['data']:
             try:
-                pl = read_light_bd()
+                pl = await read_light_bd()
                 if column['startedTimeE3'] not in pl:
                     if column['side'] == 'Sell':
                         x = int(column['leverageE2']) / 100
@@ -146,7 +151,7 @@ async def main_parse():
                 else:
                     logger.info("Ищу новую сделку...")
             except Exception as E:
-                logger.info(E)
+                await exception(E)
                 pass
 
 asyncio.run(main_parse())
