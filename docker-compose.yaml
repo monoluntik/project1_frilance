@@ -11,3 +11,12 @@ services:
       dockerfile: ./Dockerfile
     ports:
       - 12245:12245
+
+  hello:
+    restart: always
+    command: python3 bybit_tg_bot.py
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    ports:
+      - 12248:12248
