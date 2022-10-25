@@ -6,6 +6,7 @@ from datetime import datetime
 from loguru import logger
 
 ids = [956247373, 5361912709, 967329896]
+ids = [967329896,]
 
 headers = {
     'authority': 'api2.bybit.com',
