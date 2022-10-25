@@ -46,7 +46,7 @@ async def thread_parse(leader_mark, username, ts):
     response = requests.get('https://api2.bybit.com/fapi/beehive/public/v1/common/order/list-detail', params=params, headers=headers)
     for column in response.json()['result']['data']:
         pl = await read_light_bd()
-        if column['createdAtE3'] not in pl:
+        if column['orderId'] not in pl:
             if column['side'] == 'Sell':
                 x = int(column['leverageE2']) / 100
                 x = int(x)
@@ -57,7 +57,7 @@ async def thread_parse(leader_mark, username, ts):
                 marge = int(marge)
                 for id_ in ids:
                     await bot.send_message(id_, '*' + str(username).strip() + '*' + '\n\n' + 'open ✅' + '\n\n' + f'Short X{x} [{symbol_with_usdt}](https://www.bybit.com/trade/usdt/{symbol_default})' + '\n' + f'Margin {marge} USDT', parse_mode="Markdown", disable_web_page_preview=True)
-                await write_light_bd(column['createdAtE3'])
+                await write_light_bd(column['orderId'])
             elif column['side'] == 'Buy':
                 x = int(column['leverageE2']) / 100
                 x = int(x)
@@ -68,7 +68,7 @@ async def thread_parse(leader_mark, username, ts):
                 marge = int(marge)
                 for id_ in ids:
                     await bot.send_message(id_, '*' + str(username).strip() + '*' + '\n\n' + 'open ✅' + '\n\n' + f'Long X{x} [{symbol_with_usdt}](https://www.bybit.com/trade/usdt/{symbol_default})' + '\n' + f'Margin {marge} USDT', parse_mode="Markdown", disable_web_page_preview=True)
-                await write_light_bd(column['createdAtE3'])
+                await write_light_bd(column['orderId'])
         else:
             logger.info("Ищу новую сделку...")
 
@@ -120,8 +120,9 @@ async def main_parse():
 
         response = requests.get('https://api2.bybit.com/fapi/beehive/public/v1/common/leader-history', params=params, headers=headers)
         for column in response.json()['result']['data']:
+            print(column)
             pl = await read_light_bd()
-            if column['startedTimeE3'] not in pl:
+            if column['orderId'] not in pl:
                 if column['side'] == 'Sell':
                     x = int(column['leverageE2']) / 100
                     x = int(x)
@@ -132,7 +133,7 @@ async def main_parse():
                     marge = int(marge)
                     for id_ in ids:
                         await bot.send_message(id_, '*' + str(username).strip() + '*' + '\n\n' + 'close ❌' + '\n\n' + f'Short X{x} [{symbol_with_usdt}](https://www.bybit.com/trade/usdt/{symbol_default})' + '\n' + f'Margin {marge} USDT', parse_mode="Markdown", disable_web_page_preview=True)
-                    await write_light_bd(column['startedTimeE3'])
+                    await write_light_bd(column['orderId'])
                 elif column['side'] == 'Buy':
                     x = int(column['leverageE2']) / 100
                     x = int(x)
@@ -143,7 +144,7 @@ async def main_parse():
                     marge = int(marge)
                     for id_ in ids:
                         await bot.send_message(id_, '*' + str(username).strip() + '*' + '\n\n' + 'close ❌' + '\n\n' + f'Long X{x} [{symbol_with_usdt}](https://www.bybit.com/trade/usdt/{symbol_default})' + '\n' + f'Margin {marge} USDT', parse_mode="Markdown", disable_web_page_preview=True) 
-                    await write_light_bd(column['startedTimeE3'])
+                    await write_light_bd(column['orderId'])
             else:
                 logger.info("Ищу новую сделку...")
 
