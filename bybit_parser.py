@@ -142,7 +142,7 @@ async def main_parse():
                     marge = int(column['orderCostE8']) / 100000000
                     marge = int(marge)
                     for id_ in ids:
-                        await bot.send_message(id_, '*' + str(username).strip() + '*' + '\n\n' + 'close ❌' + '\n\n' + f'Long X{x} [{symbol_with_usdt}](https://www.bybit.com/trade/usdt/{symbol_default})' + '\n' + f'Margin {marge} USDT', parse_mode="Markdown", disable_web_page_preview=True)
+                        await bot.send_message(id_, '*' + str(username).strip() + '*' + '\n\n' + 'close ❌' + '\n\n' + f'Long X{x} [{symbol_with_usdt}](https://www.bybit.com/trade/usdt/{symbol_default})' + '\n' + f'Margin {marge} USDT', parse_mode="Markdown", disable_web_page_preview=True) 
                     await write_light_bd(column['startedTimeE3'])
             else:
                 logger.info("Ищу новую сделку...")
