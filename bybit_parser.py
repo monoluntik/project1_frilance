@@ -45,7 +45,8 @@ async def thread_parse(leader_mark, username, ts):
     response = requests.get('https://api2.bybit.com/fapi/beehive/public/v1/common/order/list-detail', params=params, headers=headers)
     for column in response.json()['result']['data']:
         try:
-            if column['createdAtE3'] not in await read_light_bd():
+            pl = read_light_bd()
+            if column['createdAtE3'] not in pl:
                 if column['side'] == 'Sell':
                     x = int(column['leverageE2']) / 100
                     x = int(x)
@@ -70,7 +71,8 @@ async def thread_parse(leader_mark, username, ts):
                 await write_light_bd(column['createdAtE3'])
             else:
                 logger.info("Ищу новую сделку...")
-        except:
+        except Exception as E:
+            logger.info(E)
             pass
 async def read_light_bd():
     with open('light_bd.txt', 'r') as read:
@@ -116,7 +118,8 @@ async def main_parse():
         response = requests.get('https://api2.bybit.com/fapi/beehive/public/v1/common/leader-history', params=params, headers=headers)
         for column in response.json()['result']['data']:
             try:
-                if column['startedTimeE3'] not in await read_light_bd():
+                pl = read_light_bd()
+                if column['startedTimeE3'] not in pl:
                     if column['side'] == 'Sell':
                         x = int(column['leverageE2']) / 100
                         x = int(x)
@@ -141,7 +144,8 @@ async def main_parse():
                     await write_light_bd(column['startedTimeE3'])
                 else:
                     logger.info("Ищу новую сделку...")
-            except:
+            except Exception as E:
+                logger.info(E)
                 pass
 
 asyncio.run(main_parse())
