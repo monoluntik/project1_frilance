@@ -28,7 +28,7 @@ headers = {
     'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36',
 }
 
-API_TOKEN = '5542794461:AAEG-8Mvp4Wg8nwPXBpuE4q3PsJ2XJT7uzw'
+API_TOKEN = '5662744006:AAF9OvgHAeJX1tTSL3yIkmIz0mKMJYVy5I8'
 
 # Initialize bot and dispatcher
 bot = Bot(token=API_TOKEN)
