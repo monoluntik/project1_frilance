@@ -5,7 +5,7 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMar
 from datetime import datetime
 from loguru import logger
 
-ids = [956247373, 5361912709, 967329896]
+# ids = [956247373, 5361912709, 967329896]
 ids = [967329896,]
 
 headers = {
@@ -29,7 +29,7 @@ headers = {
     'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36',
 }
 
-API_TOKEN = '5662744006:AAF9OvgHAeJX1tTSL3yIkmIz0mKMJYVy5I8'
+API_TOKEN = '5780619352:AAGrfx176OTCR1GgqDi7Grfu7kTpL7BPldw'
 
 # Initialize bot and dispatcher
 bot = Bot(token=API_TOKEN)
