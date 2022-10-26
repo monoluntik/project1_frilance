@@ -5,8 +5,8 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMar
 from datetime import datetime
 from loguru import logger
 
-ids = [956247373, 5361912709, 967329896]
-# ids = [967329896,]
+ids = [956247373, 5361912709]
+
 
 headers = {
     'authority': 'api2.bybit.com',
@@ -45,8 +45,7 @@ async def thread_parse(leader_mark, username, ts):
 
     response = requests.get('https://api2.bybit.com/fapi/beehive/public/v1/common/order/list-detail', params=params, headers=headers)
     for column in response.json()['result']['data']:
-        pl = await read_light_bd()
-        if column['orderId'] not in pl:
+        if column['createdAtE3'] not in await read_thread_parse_db():
             if column['side'] == 'Sell':
                 x = int(column['leverageE2']) / 100
                 x = int(x)
@@ -57,7 +56,8 @@ async def thread_parse(leader_mark, username, ts):
                 marge = int(marge)
                 for id_ in ids:
                     await bot.send_message(id_, '*' + str(username).strip() + '*' + '\n\n' + 'open ✅' + '\n\n' + f'Short X{x} [{symbol_with_usdt}](https://www.bybit.com/trade/usdt/{symbol_default})' + '\n' + f'Margin {marge} USDT', parse_mode="Markdown", disable_web_page_preview=True)
-                await write_light_bd(column['orderId'])
+                await write_thread_parse_db(column['createdAtE3'])
+            
             elif column['side'] == 'Buy':
                 x = int(column['leverageE2']) / 100
                 x = int(x)
@@ -68,21 +68,26 @@ async def thread_parse(leader_mark, username, ts):
                 marge = int(marge)
                 for id_ in ids:
                     await bot.send_message(id_, '*' + str(username).strip() + '*' + '\n\n' + 'open ✅' + '\n\n' + f'Long X{x} [{symbol_with_usdt}](https://www.bybit.com/trade/usdt/{symbol_default})' + '\n' + f'Margin {marge} USDT', parse_mode="Markdown", disable_web_page_preview=True)
-                await write_light_bd(column['orderId'])
+
+                await write_thread_parse_db(column['createdAtE3'])
         else:
             logger.info("Ищу новую сделку...")
 
 
-async def exception(ate3):
-    with open('exseptions.txt', 'a') as write:
-        write.write(str(ate3) + '\n')
-
-async def read_light_bd():
-    with open('light_bd.txt', 'r') as read:
+async def read_thread_parse_db():
+    with open('thread_parse.txt', 'r') as read:
         return read.read()
 
-async def write_light_bd(ate3):
-    with open('light_bd.txt', 'a') as write:
+async def write_thread_parse_db(ate3):
+    with open('thread_parse.txt', 'a') as write:
+        write.write(str(ate3) + '\n')
+
+async def read_main_db():
+    with open('main.txt', 'r') as read:
+        return read.read()
+
+async def write_main_db(ate3):
+    with open('main.txt', 'a') as write:
         write.write(str(ate3) + '\n')
 
 async def read_usernames():
@@ -120,9 +125,7 @@ async def main_parse():
 
         response = requests.get('https://api2.bybit.com/fapi/beehive/public/v1/common/leader-history', params=params, headers=headers)
         for column in response.json()['result']['data']:
-            print(column)
-            pl = await read_light_bd()
-            if column['orderId'] not in pl:
+            if column['startedTimeE3'] not in await read_main_db():
                 if column['side'] == 'Sell':
                     x = int(column['leverageE2']) / 100
                     x = int(x)
@@ -133,7 +136,8 @@ async def main_parse():
                     marge = int(marge)
                     for id_ in ids:
                         await bot.send_message(id_, '*' + str(username).strip() + '*' + '\n\n' + 'close ❌' + '\n\n' + f'Short X{x} [{symbol_with_usdt}](https://www.bybit.com/trade/usdt/{symbol_default})' + '\n' + f'Margin {marge} USDT', parse_mode="Markdown", disable_web_page_preview=True)
-                    await write_light_bd(column['orderId'])
+                    await write_main_db(column['startedTimeE3'])
+                    
                 elif column['side'] == 'Buy':
                     x = int(column['leverageE2']) / 100
                     x = int(x)
@@ -143,8 +147,9 @@ async def main_parse():
                     marge = int(column['orderCostE8']) / 100000000
                     marge = int(marge)
                     for id_ in ids:
-                        await bot.send_message(id_, '*' + str(username).strip() + '*' + '\n\n' + 'close ❌' + '\n\n' + f'Long X{x} [{symbol_with_usdt}](https://www.bybit.com/trade/usdt/{symbol_default})' + '\n' + f'Margin {marge} USDT', parse_mode="Markdown", disable_web_page_preview=True) 
-                    await write_light_bd(column['orderId'])
+                        await bot.send_message(id_, '*' + str(username).strip() + '*' + '\n\n' + 'close ❌' + '\n\n' + f'Long X{x} [{symbol_with_usdt}](https://www.bybit.com/trade/usdt/{symbol_default})' + '\n' + f'Margin {marge} USDT', parse_mode="Markdown", disable_web_page_preview=True)
+            
+                    await write_main_db(column['startedTimeE3'])
             else:
                 logger.info("Ищу новую сделку...")
 
